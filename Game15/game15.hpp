@@ -2,6 +2,7 @@
 #define GAME15_HPP
 
 #include <QMainWindow>
+#include <QWidget>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Game15; }
@@ -13,9 +14,10 @@ class Game15 : public QMainWindow
 
 private:
     Ui::Game15 *ui;
+    int m_dimension;
 
 public:
-    Game15(QWidget *parent = nullptr);
+    Game15(int dimension, QWidget *parent = nullptr);
     ~Game15();
 };
 #endif // GAME15_HPP
