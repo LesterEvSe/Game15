@@ -9,7 +9,8 @@
 
 Game15::Game15(int dimension, QWidget *parent) :
     QWidget(parent),
-    m_dimension(dimension)
+    m_dimension(dimension),
+    m_zero_pos(m_dimension-1, m_dimension-1)
 {
     m_grid_layout = std::make_unique<QGridLayout>();
     resize(m_dimension*100, m_dimension*100);
@@ -50,7 +51,7 @@ Game15::~Game15()
 // 1 0, -1 0, 0 1, 0 -1
 bool Game15::move_to(int row, int col)
 {
-    // Simulation of thread blocking
+    // Simulation of thread lock
     static bool animation_running {false};
     if (animation_running) return false;
     animation_running = true;
@@ -60,8 +61,8 @@ bool Game15::move_to(int row, int col)
     col += m_zero_pos.second;
 
     if (row < 0 || row >= m_dimension ||
-        col < 0 || col >= m_dimension) {
-
+        col < 0 || col >= m_dimension)
+    {
         // unlock thread
         animation_running = false;
         return false;
@@ -92,7 +93,7 @@ bool Game15::move_to(int row, int col)
     elem_animation->start();
 
     connect(elem_animation, &QPropertyAnimation::finished, this, [
-        this, label_from, label_to, row, col](){
+        this, label_from, label_to, row, col, zero_animation, elem_animation](){
 
         // delete elements, then add them to new positions
         m_grid_layout->removeWidget(label_from);
@@ -101,9 +102,12 @@ bool Game15::move_to(int row, int col)
         m_grid_layout->addWidget(label_from, row, col);
         m_grid_layout->addWidget(label_to, m_zero_pos.first, m_zero_pos.second);
 
-        this->m_zero_pos = {row, col};
+        m_zero_pos = {row, col};
         // unlock thread
         animation_running = false;
+
+        zero_animation->deleteLater();
+        elem_animation->deleteLater();
     });
     return true;
 }
@@ -125,8 +129,6 @@ void Game15::keyPressEvent(QKeyEvent *event)
     else if (key == Qt::Key_S || key == Qt::Key_Down)
         move_to(-1, 0);
 }
-
-
 
 
 

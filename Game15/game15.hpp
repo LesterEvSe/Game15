@@ -15,7 +15,7 @@ class Game15 : public QWidget
 
 private:
     int m_dimension;
-    QPair<int, int> m_zero_pos {3, 3};
+    QPair<int, int> m_zero_pos;
     std::unique_ptr<QGridLayout> m_grid_layout;
 
     bool move_to(int row, int col);
