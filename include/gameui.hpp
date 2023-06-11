@@ -2,6 +2,9 @@
 #define GAMEUI_HPP
 
 #include <QMainWindow>
+#include <QWidget>
+#include <QStackedWidget>
+
 #include <QGridLayout>
 #include <QLabel>
 #include <QKeyEvent>
@@ -16,16 +19,23 @@ class GameUi : public QMainWindow
 
 private:
     Ui::GameUi *ui;
+
+    // widget where m_grid_layout and pause window are located
+    QStackedWidget *m_stacked_widget;
     QGridLayout *m_grid_layout;
-    //std::unique_ptr<QGridLayout> m_grid_layout;
+
+    QWidget *m_game_widget;
+    QWidget *m_pause_widget;
 
     int m_dimension;
     unsigned int m_time;
     QTimer m_timer;
     QPair<int, int> m_zero_pos;
 
+
     bool move_to(int row, int col);
     void set_grid();
+    void set_pause_window();
     void set_styles();
     void set_timer();
 
@@ -35,6 +45,8 @@ protected:
 public:
     explicit GameUi(int dimension, QWidget *parent = nullptr);
     ~GameUi();
+private slots:
+    void on_pauseButton_clicked();
 };
 
 #endif // GAMEUI_HPP

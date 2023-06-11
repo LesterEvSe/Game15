@@ -5,20 +5,26 @@
 #include <QScreen>
 #include <QRect>
 #include <QPoint>
+
 #include <QPropertyAnimation>
 #include <QPixmap> // for icon
+#include <QVBoxLayout>
 
 #include <QDebug>
 
 GameUi::GameUi(int dimension, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::GameUi),
+
     m_dimension(dimension),
     m_time(0),
     m_zero_pos(m_dimension-1, m_dimension-1)
 {
     ui->setupUi(this);
+    setWindowTitle("Game 15");
+
     set_grid();
+    set_pause_window();
     set_styles();
     set_timer();
 
@@ -34,10 +40,17 @@ GameUi::GameUi(int dimension, QWidget *parent) :
     move((w - width())/2, (h - height())/2);
 }
 
+GameUi::~GameUi() {
+    delete ui;
+}
+
 void GameUi::set_grid()
 {
-    QWidget *widget = ui->centralwidget->findChild<QWidget*>("widget");
-    m_grid_layout = new QGridLayout(widget);
+    m_stacked_widget = ui->centralwidget->findChild<QStackedWidget*>("stackedWidget");
+    m_game_widget = m_stacked_widget->findChild<QWidget*>("Game");
+    m_pause_widget = m_stacked_widget->findChild<QWidget*>("Pause");
+    m_grid_layout = new QGridLayout(m_game_widget);
+
     int size = 100;
     if (m_dimension == 2)
         size = 150;
@@ -62,7 +75,14 @@ void GameUi::set_grid()
             m_grid_layout->addWidget(label, row, col);
         }
     }
-    widget->setLayout(m_grid_layout);
+    m_game_widget->setLayout(m_grid_layout);
+    m_stacked_widget->setCurrentWidget(m_game_widget);
+}
+
+void GameUi::set_pause_window()
+{
+    //QWidget *widget = m_stacked_widget->widget(PAUSE_WIDGET);
+
 }
 
 void GameUi::set_styles()
@@ -84,16 +104,6 @@ void GameUi::set_timer()
                                           .arg(m_time%60, 2, 10, QChar('0')));
     });
     m_timer.start(1'000);
-}
-
-GameUi::~GameUi()
-{
-    delete ui;
-//    QLayoutItem *item;
-//    while (item == m_grid_layout->takeAt(0)) {
-//        delete item->widget();
-//        delete item;
-//    }
 }
 
 // This is where we take the movement of the cell
@@ -179,8 +189,8 @@ void GameUi::keyPressEvent(QKeyEvent *event)
         move_to(-1, 0);
 }
 
+void GameUi::on_pauseButton_clicked()
+{
 
-
-
-
+}
 
