@@ -1,5 +1,5 @@
 #include "menu.hpp"
-#include "game15.hpp"
+#include "gameui.hpp"
 
 #include <QApplication>
 
@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
     int start_game = menu.exec();
     if (!start_game) return 0;
 
-    Game15 window(start_game);
+    GameUi window(start_game);
     window.show();
     return a.exec();
 }

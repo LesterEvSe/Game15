@@ -14,12 +14,15 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
 	main.cpp
-	game15.cpp
+#	game15.cpp
+    gameui.cpp
 	menu.cpp
 
-	game15.hpp
+#	game15.hpp
+    gameui.hpp
 	menu.hpp
 
+	gameui.ui
 	menu.ui
 )
 
