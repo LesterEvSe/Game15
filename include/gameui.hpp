@@ -16,7 +16,8 @@ class GameUi : public QMainWindow
 
 private:
     Ui::GameUi *ui;
-    std::unique_ptr<QGridLayout> m_grid_layout;
+    QGridLayout *m_grid_layout;
+    //std::unique_ptr<QGridLayout> m_grid_layout;
 
     int m_dimension;
     unsigned int m_time;
@@ -24,6 +25,9 @@ private:
     QPair<int, int> m_zero_pos;
 
     bool move_to(int row, int col);
+    void set_grid();
+    void set_styles();
+    void set_timer();
 
 protected:
     virtual void keyPressEvent(QKeyEvent *event) override;

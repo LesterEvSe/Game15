@@ -11,6 +11,5 @@ int main(int argc, char *argv[])
     if (!start_game) return 0;
 
     GameUi window(start_game);
-    window.show();
     return a.exec();
 }

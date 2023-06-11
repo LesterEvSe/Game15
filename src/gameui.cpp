@@ -6,6 +6,7 @@
 #include <QRect>
 #include <QPoint>
 #include <QPropertyAnimation>
+#include <QPixmap> // for icon
 
 #include <QDebug>
 
@@ -17,14 +18,26 @@ GameUi::GameUi(int dimension, QWidget *parent) :
     m_zero_pos(m_dimension-1, m_dimension-1)
 {
     ui->setupUi(this);
-    m_grid_layout = std::make_unique<QGridLayout>();
-    resize(m_dimension*100, m_dimension*100);
+    set_grid();
+    set_styles();
+    set_timer();
 
-    QRect screenGeometry = QApplication::primaryScreen()->geometry();
-    int w = screenGeometry.width();
-    int h = screenGeometry.height();
+    int window_size = m_dimension * 100;
+    resize(window_size, window_size);
+
+    QRect screen_geometry = QApplication::primaryScreen()->geometry();
+    int w = screen_geometry.width();
+    int h = screen_geometry.height();
+
+    // After that we can get the accurate size of our window
+    show();
     move((w - width())/2, (h - height())/2);
+}
 
+void GameUi::set_grid()
+{
+    QWidget *widget = ui->centralwidget->findChild<QWidget*>("widget");
+    m_grid_layout = new QGridLayout(widget);
     int size = 100;
     if (m_dimension == 2)
         size = 150;
@@ -49,9 +62,17 @@ GameUi::GameUi(int dimension, QWidget *parent) :
             m_grid_layout->addWidget(label, row, col);
         }
     }
-    QWidget *widget = ui->centralwidget->findChild<QWidget*>("widget");
-    widget->setLayout(m_grid_layout.get());
+    widget->setLayout(m_grid_layout);
+}
 
+void GameUi::set_styles()
+{
+    QPixmap pixmap(":/clock.png");
+    ui->centralwidget->findChild<QLabel*>("iconLabel")->setPixmap(pixmap);
+}
+
+void GameUi::set_timer()
+{
     QLabel *label = ui->centralwidget->findChild<QLabel*>("timeLabel");
     QObject::connect(&m_timer, &QTimer::timeout, [this, label](){
         static constexpr unsigned int max_time = 3600*100-1;
@@ -68,11 +89,11 @@ GameUi::GameUi(int dimension, QWidget *parent) :
 GameUi::~GameUi()
 {
     delete ui;
-    QLayoutItem *item;
-    while (item == m_grid_layout->takeAt(0)) {
-        delete item->widget();
-        delete item;
-    }
+//    QLayoutItem *item;
+//    while (item == m_grid_layout->takeAt(0)) {
+//        delete item->widget();
+//        delete item;
+//    }
 }
 
 // This is where we take the movement of the cell
