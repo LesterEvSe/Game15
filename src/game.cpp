@@ -8,7 +8,6 @@
 
 #include <QPropertyAnimation>
 #include <QPixmap> // for icon
-#include <QVBoxLayout>
 
 #include <QDebug>
 
@@ -19,11 +18,11 @@ Game::Game(int dimension, QWidget *parent) :
     ui(new Ui::Game),
 
     m_dimension(dimension),
-    m_time(0),
-    m_zero_pos(m_dimension-1, m_dimension-1)
+    m_time_ms(0)
 {
     ui->setupUi(this);
     setWindowTitle("Game 15");
+    m_solver = std::make_unique<Solver>(m_dimension);
 
     set_grid();
     set_styles();
@@ -55,6 +54,8 @@ void Game::set_grid()
     if (m_dimension == 2)
         size = 150;
 
+    // We get a random solvable field
+    std::vector<std::vector<int>> field = m_solver->get_field();
     for (int row = 0; row < m_dimension; ++row)
     {
         m_grid_layout->setRowMinimumHeight(row, size);
@@ -62,11 +63,13 @@ void Game::set_grid()
 
         for (int col = 0; col < m_dimension; ++col)
         {
-            int value = row * m_dimension + col + 1;
+            int value = field[row][col];
             QLabel *label;
 
-            if (value == m_dimension * m_dimension)
+            if (value == 0) {
                 label = new QLabel();
+                m_zero_pos = {row, col};
+            }
             else {
                 label = new QLabel(QString::number(value));
                 label->setFrameStyle(QFrame::Box);
@@ -90,13 +93,13 @@ void Game::set_timer()
 {
     QObject::connect(&m_timer, &QTimer::timeout, [this](){
         static constexpr unsigned int max_time = 3600*100-1;
-        if (m_time >= max_time) return;
-        ++m_time;
+        if (m_time_ms >= max_time) return;
+        ++m_time_ms;
 
         ui->timeLabel->setText(QString("%1:%2:%3")
-                                   .arg(m_time/3'600'000,   2, 10, QChar('0'))
-                                   .arg((m_time/60'000)%60, 2, 10, QChar('0'))
-                                   .arg((m_time/1'000)%60,  2, 10, QChar('0')));
+                                   .arg(m_time_ms/3'600'000,   2, 10, QChar('0'))
+                                   .arg((m_time_ms/60'000)%60, 2, 10, QChar('0'))
+                                   .arg((m_time_ms/1'000)%60,  2, 10, QChar('0')));
     });
 
     // When you pause, the counter is reset,
@@ -161,11 +164,18 @@ bool Game::move_to(int row, int col)
         m_grid_layout->addWidget(label_to, m_zero_pos.first, m_zero_pos.second);
 
         m_zero_pos = {row, col};
+        m_solver->move(row, col);
+
         // unlock thread
         animation_running = false;
 
         zero_animation->deleteLater();
         elem_animation->deleteLater();
+
+        if (m_solver->is_solved()) {
+            qDebug() << "Congratulations!";
+            close();
+        }
     });
     return true;
 }

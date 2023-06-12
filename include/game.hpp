@@ -1,6 +1,8 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 
+#include "solver.hpp"
+
 #include <QWidget>
 #include <QStackedWidget>
 
@@ -22,12 +24,14 @@ private:
     QWidget *m_pause_widget;
     QGridLayout *m_grid_layout;
 
-    static bool block_keyboard;
-
     int m_dimension;
-    unsigned int m_time;
+    std::unique_ptr<Solver> m_solver;
+
+    unsigned int m_time_ms;
     QTimer m_timer;
     QPair<int, int> m_zero_pos;
+
+    static bool block_keyboard;
 
     bool move_to(int row, int col);
     void set_grid();

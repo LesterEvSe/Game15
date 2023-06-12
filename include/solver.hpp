@@ -6,11 +6,11 @@
 
 class Solver {
     int m_size;
-    int m_dim;
+    int m_dimension;
     std::vector<std::vector<int>> m_field;
+    std::pair<int, int> m_zero_pos;
 
     static char get_direction(int row, int col);
-    static std::string matrix_to_str(const std::vector<std::vector<int>>& matrix);
 
     bool solvable();
     void set_solvable();
@@ -25,12 +25,13 @@ class Solver {
 
 public:
     int solve();
-    bool move(int row, int col);
+    bool is_solved();
+    void move(int row, int col);
     [[nodiscard]] std::vector<std::vector<int>> get_field() const;
 
     explicit Solver(int dimension);
     explicit Solver(const std::vector<std::vector<int>>& field) :
-            m_dim((int)field.size()),
+            m_dimension((int)field.size()),
             m_size(field.size()*field.size()),
             m_field(field) {}
 };

@@ -5,15 +5,6 @@
 #include <queue>
 #include <random>
 
-std::string Solver::matrix_to_str(const std::vector<std::vector<int>>& matrix) {
-    std::string str;
-    for (const auto& arr : matrix)
-        for (int elem : arr)
-            str += static_cast<char>(elem + 'a');
-    return std::move(str);
-}
-
-
 bool Solver::solvable() {
     // example of composing inversions
     /**
@@ -30,24 +21,24 @@ bool Solver::solvable() {
     int zero_row{-1};
 
     for (int i = 0; i < m_size; ++i) {
-        if (!m_field[i / m_dim][i % m_dim]) {
-            zero_row = i / m_dim;
+        if (!m_field[i / m_dimension][i % m_dimension]) {
+            zero_row = i / m_dimension;
             continue;
         }
 
         for (int j = i + 1; j < m_size; ++j)
-            if (m_field[i / m_dim][i % m_dim] > m_field[j / m_dim][j % m_dim] &&
-                m_field[j / m_dim][j % m_dim])
+            if (m_field[i / m_dimension][i % m_dimension] > m_field[j / m_dimension][j % m_dimension] &&
+                m_field[j / m_dimension][j % m_dimension])
                 ++inversions;
     }
 
     // if odd num
-    if (m_dim % 2)
+    if (m_dimension % 2)
         return inversions % 2 == 0;
     else
         // If the row with zero is even and the number of inversions is even too OR
         // the both row and number of inversions are odd, then TRUE
-        return ((m_dim - zero_row) % 2) ^ (inversions % 2);
+        return ((m_dimension - zero_row) % 2) ^ (inversions % 2);
 }
 
 void Solver::set_solvable() {
@@ -68,7 +59,7 @@ void Solver::fill_field() {
 
     // Copy nums to m_field
     for (int i = 0; i < m_size; ++i)
-        m_field[i/m_dim][i%m_dim] = nums[i];
+        m_field[i/m_dimension][i%m_dimension] = nums[i];
 }
 
 char Solver::get_direction(int row, int col) {
@@ -87,7 +78,13 @@ std::string Solver::AStar()
     std::unordered_set<std::string> visited;
     std::priority_queue<Item, std::vector<Item>, std::greater<>> pq;
 
-    pq.emplace(matrix_to_str(m_field), "", m_dim);
+    // convert matrix to string
+    std::string str;
+    for (const auto& arr : m_field)
+        for (int elem : arr)
+            str += static_cast<char>(elem + 'a');
+
+    pq.emplace(str, "", m_dimension);
     if (pq.top().is_goal()) return "Already solved";
 
     // With 'move' we move 0 (i.e. empty cell in all 4 directions
@@ -110,50 +107,65 @@ std::string Solver::AStar()
         for (int i = 1; i < dirs; ++i) {
             std::string temp = board.get_str();
 
-            int new_zrow = board.get_zero_ind() / m_dim + move[i-1];
-            int new_zcol = board.get_zero_ind() % m_dim + move[i];
+            int new_zrow = board.get_zero_ind() / m_dimension + move[i-1];
+            int new_zcol = board.get_zero_ind() % m_dimension + move[i];
 
             // Якщо нові координати виходять за межі поля, то пропустити цю ітерацію
-            if (new_zrow < 0 || new_zrow >= m_dim ||
-                new_zcol < 0 || new_zcol >= m_dim) continue;
+            if (new_zrow < 0 || new_zrow >= m_dimension ||
+                new_zcol < 0 || new_zcol >= m_dimension) continue;
 
             // змінюємо позицію нашого поля, перетворюючи двомірні координати в одномірні
-            std::swap(temp[new_zrow*m_dim + new_zcol], temp[board.get_zero_ind()]);
+            std::swap(temp[new_zrow*m_dimension + new_zcol], temp[board.get_zero_ind()]);
             if (visited.find(temp) == visited.end()) {
                 visited.emplace(temp);
-                pq.emplace(temp, board.get_path() + get_direction(move[i - 1], move[i]), m_dim);
+                pq.emplace(temp, board.get_path() + get_direction(move[i - 1], move[i]), m_dimension);
             }
         }
     }
 }
 
-std::vector<std::vector<int>> Solver::get_field() const {
-    return m_field;
-}
-
+#include <QDebug>
 Solver::Solver(int dimension) :
-        m_dim(dimension),
+        m_dimension(dimension),
         m_size(dimension * dimension),
         m_field(dimension, std::vector<int>(dimension))
 {
     do {
         fill_field();
         set_solvable();
-    } while (!solvable());
+    } while (!solvable() || is_solved());
+
+    for (int row = 0; row < m_dimension; ++row)
+        for (int col = 0; col < m_dimension; ++col)
+            if (m_field[row][col] == 0)
+                m_zero_pos = {row, col};
 }
 
-bool Solver::move(int row, int col)
+int Solver::solve()
 {
-
-    return true;
-}
-
-int Solver::solve() {
-    if (!solvable() || m_dim < 2 || m_dim > 5)
+    if (!solvable() || m_dimension < 2 || m_dimension > 5)
         return -1;
 
     std::string path = AStar();
-    if (path == "Already solved")
-        return 0;
     return path.size();
+}
+
+bool Solver::is_solved()
+{
+    int value = 0;
+    for (int row = 0; row < m_dimension; ++row)
+        for (int col = 0; col < m_dimension; ++col)
+            if (++value % m_size != m_field[row][col])
+                return false;
+    return true;
+}
+
+void Solver::move(int row, int col)
+{
+    std::swap(m_field[row][col], m_field[m_zero_pos.first][m_zero_pos.second]);
+    m_zero_pos = {row, col};
+}
+
+std::vector<std::vector<int>> Solver::get_field() const {
+    return m_field;
 }
