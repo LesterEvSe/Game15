@@ -10,6 +10,11 @@
     <height>600</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <bold>true</bold>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
@@ -72,6 +77,7 @@
         <widget class="QLabel" name="iconLabel">
          <property name="font">
           <font>
+           <pointsize>14</pointsize>
            <bold>true</bold>
           </font>
          </property>
@@ -87,6 +93,7 @@
         <widget class="QLabel" name="timeLabel">
          <property name="font">
           <font>
+           <pointsize>14</pointsize>
            <bold>true</bold>
           </font>
          </property>
@@ -115,6 +122,7 @@
         <widget class="QPushButton" name="solveButton">
          <property name="font">
           <font>
+           <pointsize>14</pointsize>
            <bold>true</bold>
           </font>
          </property>
@@ -143,6 +151,7 @@
         <widget class="QPushButton" name="playAgainButton">
          <property name="font">
           <font>
+           <pointsize>14</pointsize>
            <bold>true</bold>
           </font>
          </property>
@@ -158,6 +167,7 @@
         <widget class="QPushButton" name="changeDifficultyButton">
          <property name="font">
           <font>
+           <pointsize>14</pointsize>
            <bold>true</bold>
           </font>
          </property>
@@ -173,6 +183,7 @@
         <widget class="QPushButton" name="bestTimesButton">
          <property name="font">
           <font>
+           <pointsize>14</pointsize>
            <bold>true</bold>
           </font>
          </property>
@@ -188,6 +199,7 @@
         <widget class="QPushButton" name="pauseButton">
          <property name="font">
           <font>
+           <pointsize>14</pointsize>
            <bold>true</bold>
           </font>
          </property>

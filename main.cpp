@@ -1,7 +1,9 @@
 #include "menu.hpp"
 #include "game.hpp"
+#include "solver.hpp"
 
 #include <QApplication>
+#include <QDebug>
 
 int main(int argc, char *argv[])
 {

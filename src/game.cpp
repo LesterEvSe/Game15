@@ -82,6 +82,7 @@ void Game::set_grid()
 void Game::set_styles()
 {
     QPixmap pixmap(":/clock.png");
+    pixmap = pixmap.scaled(pixmap.size());
     ui->iconLabel->setPixmap(pixmap);
 }
 
@@ -92,11 +93,16 @@ void Game::set_timer()
         if (m_time >= max_time) return;
         ++m_time;
 
-        ui->timeLabel->setText(QString("%1:%2:%3").arg(m_time/3600, 2, 10, QChar('0'))
-                                   .arg((m_time/60)%60, 2, 10, QChar('0'))
-                                   .arg(m_time%60, 2, 10, QChar('0')));
+        ui->timeLabel->setText(QString("%1:%2:%3")
+                                   .arg(m_time/3'600'000,   2, 10, QChar('0'))
+                                   .arg((m_time/60'000)%60, 2, 10, QChar('0'))
+                                   .arg((m_time/1'000)%60,  2, 10, QChar('0')));
     });
-    m_timer.start(1'000);
+
+    // When you pause, the counter is reset,
+    // so if there are seconds,
+    // you can solve the whole field in 0 seconds
+    m_timer.start(1);
 }
 
 // This is where we take the movement of the cell
@@ -166,20 +172,24 @@ bool Game::move_to(int row, int col)
 
 void Game::keyPressEvent(QKeyEvent *event)
 {
-    if (block_keyboard) return;
     int key = event->key();
+    QString unicode_char = event->text();
+    if (key == Qt::Key_P || unicode_char == QString("з"))
+        on_pauseButton_clicked();
+
+    if (block_keyboard) return;
 
     // Although programmatically we move the 0 cell,
     // the user moves specific blocks of numbers.
     // So moving 0 UP is equivalent to moving
     // the cell with the number DOWN.
-    if      (key == Qt::Key_A || key == Qt::Key_Left)
+    if      (key == Qt::Key_A || key == Qt::Key_Left  || unicode_char == QString("ф"))
         move_to(0, 1);
-    else if (key == Qt::Key_D || key == Qt::Key_Right)
+    else if (key == Qt::Key_D || key == Qt::Key_Right || unicode_char == QString("в"))
         move_to(0, -1);
-    else if (key == Qt::Key_W || key == Qt::Key_Up)
+    else if (key == Qt::Key_W || key == Qt::Key_Up    || unicode_char == QString("ц"))
         move_to(1, 0);
-    else if (key == Qt::Key_S || key == Qt::Key_Down)
+    else if (key == Qt::Key_S || key == Qt::Key_Down  || unicode_char == QString("ы") || unicode_char == QString("і"))
         move_to(-1, 0);
 }
 

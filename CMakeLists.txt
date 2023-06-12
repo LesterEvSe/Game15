@@ -34,12 +34,16 @@ include_directories(
 set(SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/game.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/menu.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/solver.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/item.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
 )
 
 set(HEADERS
 	${CMAKE_CURRENT_SOURCE_DIR}/include/game.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/menu.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/include/solver.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/include/item.hpp
 )
 
 set(FORMS
