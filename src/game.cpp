@@ -12,6 +12,8 @@
 
 #include <QDebug>
 
+bool Game::block_keyboard {false};
+
 Game::Game(int dimension, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Game),
@@ -21,7 +23,6 @@ Game::Game(int dimension, QWidget *parent) :
     m_zero_pos(m_dimension-1, m_dimension-1)
 {
     ui->setupUi(this);
-    qDebug() << "here";
     setWindowTitle("Game 15");
 
     set_grid();
@@ -165,6 +166,7 @@ bool Game::move_to(int row, int col)
 
 void Game::keyPressEvent(QKeyEvent *event)
 {
+    if (block_keyboard) return;
     int key = event->key();
 
     // Although programmatically we move the 0 cell,
@@ -180,3 +182,24 @@ void Game::keyPressEvent(QKeyEvent *event)
     else if (key == Qt::Key_S || key == Qt::Key_Down)
         move_to(-1, 0);
 }
+
+void Game::on_pauseButton_clicked()
+{
+    static bool pause {false};
+    if (!pause) {
+        m_timer.stop();
+        block_keyboard = true;
+        pause = true;
+
+        ui->pauseButton->setText("Resume");
+        ui->stackedWidget->setCurrentWidget(m_pause_widget);
+        return;
+    }
+    ui->pauseButton->setText("Pause");
+    ui->stackedWidget->setCurrentWidget(m_game_widget);
+
+    m_timer.start();
+    block_keyboard = false;
+    pause = false;
+}
+

@@ -22,6 +22,8 @@ private:
     QWidget *m_pause_widget;
     QGridLayout *m_grid_layout;
 
+    static bool block_keyboard;
+
     int m_dimension;
     unsigned int m_time;
     QTimer m_timer;
@@ -31,6 +33,9 @@ private:
     void set_grid();
     void set_styles();
     void set_timer();
+
+private slots:
+    void on_pauseButton_clicked();
 
 protected:
     virtual void keyPressEvent(QKeyEvent *event) override;
