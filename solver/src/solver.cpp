@@ -5,6 +5,8 @@
 #include <queue>
 #include <random>
 
+#include <QDebug> // NEED TO DELETE LATER!!!
+
 bool Solver::solvable() {
     // example of composing inversions
     /**
@@ -124,7 +126,7 @@ std::string Solver::AStar()
     }
 }
 
-#include <QDebug>
+
 Solver::Solver(int dimension) :
         m_dimension(dimension),
         m_size(dimension * dimension),

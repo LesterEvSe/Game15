@@ -3,10 +3,7 @@
 
 #include <QDialog>
 
-namespace Ui {
-class Menu;
-}
-
+namespace Ui { class Menu; }
 class Menu : public QDialog
 {
     Q_OBJECT

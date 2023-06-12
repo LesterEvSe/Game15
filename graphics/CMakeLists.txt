@@ -1,0 +1,22 @@
+add_library(graphics
+    src/game.cpp
+    src/menu.cpp
+    
+    # This is necessary for moc files,
+    # otherwise there will be an error!
+    include/game.hpp
+    include/menu.hpp
+)
+
+# To specify where the .ui files are located
+set_target_properties(graphics PROPERTIES AUTOUIC_SEARCH_PATHS forms)
+target_include_directories(graphics
+    PUBLIC include
+    ../solver/include
+)
+
+target_link_libraries(graphics PRIVATE
+    Qt5::Core
+    Qt5::Gui
+    Qt5::Widgets
+)
