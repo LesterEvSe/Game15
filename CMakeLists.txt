@@ -32,18 +32,18 @@ include_directories(
 )
 
 set(SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/gameui.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/game.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/menu.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
 )
 
 set(HEADERS
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/gameui.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/include/game.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/menu.hpp
 )
 
 set(FORMS
-    ${CMAKE_CURRENT_SOURCE_DIR}/forms/gameui.ui
+	${CMAKE_CURRENT_SOURCE_DIR}/forms/game.ui
     ${CMAKE_CURRENT_SOURCE_DIR}/forms/menu.ui
 )
 

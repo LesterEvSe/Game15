@@ -1,5 +1,5 @@
-#include "gameui.hpp"
-#include "ui_gameui.h"
+#include "game.hpp"
+#include "ui_game.h"
 
 // To display the window in the center
 #include <QScreen>
@@ -12,19 +12,19 @@
 
 #include <QDebug>
 
-GameUi::GameUi(int dimension, QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::GameUi),
+Game::Game(int dimension, QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::Game),
 
     m_dimension(dimension),
     m_time(0),
     m_zero_pos(m_dimension-1, m_dimension-1)
 {
     ui->setupUi(this);
+    qDebug() << "here";
     setWindowTitle("Game 15");
 
     set_grid();
-    set_pause_window();
     set_styles();
     set_timer();
 
@@ -40,15 +40,14 @@ GameUi::GameUi(int dimension, QWidget *parent) :
     move((w - width())/2, (h - height())/2);
 }
 
-GameUi::~GameUi() {
+Game::~Game() {
     delete ui;
 }
 
-void GameUi::set_grid()
+void Game::set_grid()
 {
-    m_stacked_widget = ui->centralwidget->findChild<QStackedWidget*>("stackedWidget");
-    m_game_widget = m_stacked_widget->findChild<QWidget*>("Game");
-    m_pause_widget = m_stacked_widget->findChild<QWidget*>("Pause");
+    m_game_widget = ui->stackedWidget->findChild<QWidget*>("game");
+    m_pause_widget = ui->stackedWidget->findChild<QWidget*>("pause");
     m_grid_layout = new QGridLayout(m_game_widget);
 
     int size = 100;
@@ -76,39 +75,32 @@ void GameUi::set_grid()
         }
     }
     m_game_widget->setLayout(m_grid_layout);
-    m_stacked_widget->setCurrentWidget(m_game_widget);
+    ui->stackedWidget->setCurrentWidget(m_game_widget);
 }
 
-void GameUi::set_pause_window()
-{
-    //QWidget *widget = m_stacked_widget->widget(PAUSE_WIDGET);
-
-}
-
-void GameUi::set_styles()
+void Game::set_styles()
 {
     QPixmap pixmap(":/clock.png");
-    ui->centralwidget->findChild<QLabel*>("iconLabel")->setPixmap(pixmap);
+    ui->iconLabel->setPixmap(pixmap);
 }
 
-void GameUi::set_timer()
+void Game::set_timer()
 {
-    QLabel *label = ui->centralwidget->findChild<QLabel*>("timeLabel");
-    QObject::connect(&m_timer, &QTimer::timeout, [this, label](){
+    QObject::connect(&m_timer, &QTimer::timeout, [this](){
         static constexpr unsigned int max_time = 3600*100-1;
         if (m_time >= max_time) return;
         ++m_time;
 
-        label->setText(QString("%1:%2:%3").arg(m_time/3600, 2, 10, QChar('0'))
-                                          .arg((m_time/60)%60, 2, 10, QChar('0'))
-                                          .arg(m_time%60, 2, 10, QChar('0')));
+        ui->timeLabel->setText(QString("%1:%2:%3").arg(m_time/3600, 2, 10, QChar('0'))
+                                   .arg((m_time/60)%60, 2, 10, QChar('0'))
+                                   .arg(m_time%60, 2, 10, QChar('0')));
     });
     m_timer.start(1'000);
 }
 
 // This is where we take the movement of the cell
 // 1 0, -1 0, 0 1, 0 -1
-bool GameUi::move_to(int row, int col)
+bool Game::move_to(int row, int col)
 {
     // Simulation of thread lock
     static bool animation_running {false};
@@ -152,7 +144,7 @@ bool GameUi::move_to(int row, int col)
     elem_animation->start();
 
     connect(elem_animation, &QPropertyAnimation::finished, this, [
-                                                                     this, label_from, label_to, row, col, zero_animation, elem_animation](){
+            this, label_from, label_to, row, col, zero_animation, elem_animation](){
 
         // delete elements, then add them to new positions
         m_grid_layout->removeWidget(label_from);
@@ -171,7 +163,7 @@ bool GameUi::move_to(int row, int col)
     return true;
 }
 
-void GameUi::keyPressEvent(QKeyEvent *event)
+void Game::keyPressEvent(QKeyEvent *event)
 {
     int key = event->key();
 
@@ -188,9 +180,3 @@ void GameUi::keyPressEvent(QKeyEvent *event)
     else if (key == Qt::Key_S || key == Qt::Key_Down)
         move_to(-1, 0);
 }
-
-void GameUi::on_pauseButton_clicked()
-{
-
-}
-

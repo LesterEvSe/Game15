@@ -1,7 +1,6 @@
-#ifndef GAMEUI_HPP
-#define GAMEUI_HPP
+#ifndef GAME_HPP
+#define GAME_HPP
 
-#include <QMainWindow>
 #include <QWidget>
 #include <QStackedWidget>
 
@@ -12,30 +11,24 @@
 
 #include <memory>
 
-namespace Ui { class GameUi; }
-class GameUi : public QMainWindow
+namespace Ui { class Game; }
+class Game : public QWidget
 {
     Q_OBJECT
 
 private:
-    Ui::GameUi *ui;
-
-    // widget where m_grid_layout and pause window are located
-    QStackedWidget *m_stacked_widget;
-    QGridLayout *m_grid_layout;
-
+    Ui::Game *ui;
     QWidget *m_game_widget;
     QWidget *m_pause_widget;
+    QGridLayout *m_grid_layout;
 
     int m_dimension;
     unsigned int m_time;
     QTimer m_timer;
     QPair<int, int> m_zero_pos;
 
-
     bool move_to(int row, int col);
     void set_grid();
-    void set_pause_window();
     void set_styles();
     void set_timer();
 
@@ -43,10 +36,8 @@ protected:
     virtual void keyPressEvent(QKeyEvent *event) override;
 
 public:
-    explicit GameUi(int dimension, QWidget *parent = nullptr);
-    ~GameUi();
-private slots:
-    void on_pauseButton_clicked();
+    explicit Game(int dimension, QWidget *parent = nullptr);
+    ~Game();
 };
 
-#endif // GAMEUI_HPP
+#endif // GAME_HPP
