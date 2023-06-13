@@ -41,7 +41,6 @@ private:
     bool move_to(int row, int col);
     void set_grid();
     void set_styles();
-    void set_timer();
 
     void new_game();
     void end_game();

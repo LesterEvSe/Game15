@@ -1,5 +1,6 @@
 #include "game.hpp"
 #include "ui_game.h"
+#include "menu.hpp"
 
 // To display the window in the center
 #include <QScreen>
@@ -10,7 +11,6 @@
 #include <QPixmap> // for icon
 
 #include <vector>
-#include <QDebug>
 
 Game::Game(int dimension, QWidget *parent) :
     QWidget(parent),
@@ -130,25 +130,6 @@ void Game::set_styles()
     QPixmap pixmap(":/clock.png");
     pixmap = pixmap.scaled(pixmap.size());
     ui->iconLabel->setPixmap(pixmap);
-}
-
-void Game::set_timer()
-{
-    QObject::connect(&m_timer, &QTimer::timeout, [this](){
-        static constexpr unsigned int max_time = 3600*100-1;
-        if (m_time_ms >= max_time) return;
-        ++m_time_ms;
-
-        ui->timeLabel->setText(QString("%1:%2:%3")
-                                   .arg(m_time_ms/3'600'000,   2, 10, QChar('0'))
-                                   .arg((m_time_ms/60'000)%60, 2, 10, QChar('0'))
-                                   .arg((m_time_ms/1'000)%60,  2, 10, QChar('0')));
-    });
-
-    // When you pause, the counter is reset,
-    // so if there are seconds,
-    // you can solve the whole field in 0 seconds
-    m_timer.start(1);
 }
 
 // This is where we take the movement of the cell
@@ -273,6 +254,12 @@ void Game::on_playAgainButton_clicked() {
 
 void Game::on_changeDifficultyButton_clicked()
 {
-
+    close();
+    std::unique_ptr<Menu> menu = std::make_unique<Menu>();
+    int start_game = menu->exec();
+    if (start_game) {
+        Game *new_game = new Game(start_game);
+        deleteLater();
+    }
 }
 
