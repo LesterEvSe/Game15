@@ -5,8 +5,6 @@
 #include <queue>
 #include <random>
 
-#include <QDebug> // NEED TO DELETE LATER!!!
-
 bool Solver::solvable() {
     // example of composing inversions
     /**

@@ -9,6 +9,3 @@ add_library(solver
 )
 
 target_include_directories(solver PUBLIC include)
-target_link_libraries(solver PRIVATE
-    Qt5::Core
-)
