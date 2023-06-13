@@ -9,9 +9,8 @@
 #include <QPropertyAnimation>
 #include <QPixmap> // for icon
 
+#include <vector>
 #include <QDebug>
-
-bool Game::block_keyboard {false};
 
 Game::Game(int dimension, QWidget *parent) :
     QWidget(parent),
@@ -22,11 +21,24 @@ Game::Game(int dimension, QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowTitle("Game 15");
-    m_solver = std::make_unique<Solver>(m_dimension);
 
     set_grid();
     set_styles();
-    set_timer();
+    QObject::connect(&m_timer, &QTimer::timeout, [this](){
+        static constexpr unsigned int max_time = 3'600'000*100-1;
+        if (m_time_ms >= max_time) return;
+        ++m_time_ms;
+
+        ui->timeLabel->setText(QString("%1:%2:%3")
+                                   .arg(m_time_ms/3'600'000,   2, 10, QChar('0'))
+                                   .arg((m_time_ms/60'000)%60, 2, 10, QChar('0'))
+                                   .arg((m_time_ms/1'000)%60,  2, 10, QChar('0')));
+    });
+
+    // When you pause, the counter is reset,
+    // so if there are seconds,
+    // you can solve the whole field in 0 seconds
+    m_timer.setInterval(1);
 
     int window_size = m_dimension * 100;
     resize(window_size, window_size);
@@ -44,6 +56,46 @@ Game::~Game() {
     delete ui;
 }
 
+
+void Game::new_game()
+{
+    // We get a random solvable field
+    m_solver = std::make_unique<Solver>(m_dimension);
+    const std::vector<std::vector<int>>& field = m_solver->get_field();
+    for (int row = 0; row < m_dimension; ++row)
+        for (int col = 0; col < m_dimension; ++col)
+        {
+            int value = field[row][col];
+            QLabel *label = qobject_cast<QLabel*>(m_grid_layout->itemAtPosition(row, col)->widget());
+
+            if (value) {
+                label->setText(QString::number(value));
+                label->setFrameStyle(QFrame::Box);
+            }
+            else {
+                label->setText("");
+                label->setFrameStyle(QFrame::NoFrame);
+                m_zero_pos = {row, col};
+            }
+        }
+    m_block_keyboard = false;
+    m_pause = false;
+    ui->solveButton->setEnabled(true);
+    ui->pauseButton->setEnabled(true);
+
+    m_time_ms = 0;
+    m_timer.start();
+}
+
+void Game::end_game()
+{
+    m_timer.stop();
+    m_block_keyboard = true;
+    ui->solveButton->setEnabled(false);
+    ui->pauseButton->setEnabled(false);
+}
+
+
 void Game::set_grid()
 {
     m_game_widget = ui->stackedWidget->findChild<QWidget*>("game");
@@ -54,8 +106,6 @@ void Game::set_grid()
     if (m_dimension == 2)
         size = 150;
 
-    // We get a random solvable field
-    std::vector<std::vector<int>> field = m_solver->get_field();
     for (int row = 0; row < m_dimension; ++row)
     {
         m_grid_layout->setRowMinimumHeight(row, size);
@@ -63,21 +113,14 @@ void Game::set_grid()
 
         for (int col = 0; col < m_dimension; ++col)
         {
-            int value = field[row][col];
-            QLabel *label;
+            QLabel *label = new QLabel();
+            label->setAlignment(Qt::AlignCenter);
 
-            if (value == 0) {
-                label = new QLabel();
-                m_zero_pos = {row, col};
-            }
-            else {
-                label = new QLabel(QString::number(value));
-                label->setFrameStyle(QFrame::Box);
-                label->setAlignment(Qt::AlignCenter);
-            }
             m_grid_layout->addWidget(label, row, col);
         }
     }
+    new_game();
+
     m_game_widget->setLayout(m_grid_layout);
     ui->stackedWidget->setCurrentWidget(m_game_widget);
 }
@@ -135,20 +178,20 @@ bool Game::move_to(int row, int col)
     QLabel *label_from = qobject_cast<QLabel*>(layout_item_from->widget());
     QLabel *label_to   = qobject_cast<QLabel*>(layout_item_to->widget());
 
-    QPoint curr_pos    = label_from->pos();
-    QPoint target_pos  = label_to->pos();
+    //QPoint curr_pos    = label_from->pos();
+    //QPoint target_pos  = label_to->pos();
 
     // in ms
     static constexpr int duration {100};
     QPropertyAnimation *zero_animation = new QPropertyAnimation(label_from, "pos");
     zero_animation->setDuration(duration);
-    zero_animation->setStartValue(curr_pos);
-    zero_animation->setEndValue(target_pos);
+    zero_animation->setStartValue(label_from->pos());
+    zero_animation->setEndValue(label_to->pos());
 
     QPropertyAnimation *elem_animation = new QPropertyAnimation(label_to, "pos");
     elem_animation->setDuration(duration);
-    elem_animation->setStartValue(target_pos);
-    elem_animation->setEndValue(curr_pos);
+    elem_animation->setStartValue(label_to->pos());
+    elem_animation->setEndValue(label_from->pos());
 
     zero_animation->start();
     elem_animation->start();
@@ -172,13 +215,13 @@ bool Game::move_to(int row, int col)
         zero_animation->deleteLater();
         elem_animation->deleteLater();
 
-        if (m_solver->is_solved()) {
-            qDebug() << "Congratulations!";
-            close();
-        }
+        if (m_solver->is_solved())
+            end_game();
     });
     return true;
 }
+
+
 
 void Game::keyPressEvent(QKeyEvent *event)
 {
@@ -187,7 +230,7 @@ void Game::keyPressEvent(QKeyEvent *event)
     if (key == Qt::Key_P || unicode_char == QString("з"))
         on_pauseButton_clicked();
 
-    if (block_keyboard) return;
+    if (m_block_keyboard) return;
 
     // Although programmatically we move the 0 cell,
     // the user moves specific blocks of numbers.
@@ -205,11 +248,10 @@ void Game::keyPressEvent(QKeyEvent *event)
 
 void Game::on_pauseButton_clicked()
 {
-    static bool pause {false};
-    if (!pause) {
+    if (!m_pause) {
         m_timer.stop();
-        block_keyboard = true;
-        pause = true;
+        m_block_keyboard = true;
+        m_pause = true;
 
         ui->pauseButton->setText("Resume");
         ui->stackedWidget->setCurrentWidget(m_pause_widget);
@@ -219,7 +261,18 @@ void Game::on_pauseButton_clicked()
     ui->stackedWidget->setCurrentWidget(m_game_widget);
 
     m_timer.start();
-    block_keyboard = false;
-    pause = false;
+    m_block_keyboard = false;
+    m_pause = false;
+}
+
+
+void Game::on_playAgainButton_clicked() {
+    new_game();
+}
+
+
+void Game::on_changeDifficultyButton_clicked()
+{
+
 }
 

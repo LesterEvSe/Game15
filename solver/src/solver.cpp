@@ -168,6 +168,6 @@ void Solver::move(int row, int col)
     m_zero_pos = {row, col};
 }
 
-std::vector<std::vector<int>> Solver::get_field() const {
+const std::vector<std::vector<int>>& Solver::get_field() const {
     return m_field;
 }

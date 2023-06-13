@@ -27,7 +27,7 @@ public:
     int solve();
     bool is_solved();
     void move(int row, int col);
-    [[nodiscard]] std::vector<std::vector<int>> get_field() const;
+    [[nodiscard]] const std::vector<std::vector<int>>& get_field() const;
 
     explicit Solver(int dimension);
     explicit Solver(const std::vector<std::vector<int>>& field) :

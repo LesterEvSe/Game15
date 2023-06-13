@@ -6,6 +6,10 @@ add_library(graphics
     # otherwise there will be an error!
     include/game.hpp
     include/menu.hpp
+    
+    # To display these files in Qt Creator
+    forms/game.ui
+    forms/menu.ui
 )
 
 # To specify where the .ui files are located

@@ -12,6 +12,6 @@ int main(int argc, char *argv[])
     int start_game = menu.exec();
     if (!start_game) return 0;
 
-    Game window(start_game);
+    Game *window = new Game(start_game);
     return a.exec();
 }
