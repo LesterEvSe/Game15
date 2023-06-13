@@ -37,6 +37,10 @@ private:
     bool m_block_keyboard;
     bool m_pause;
 
+    // Incremented. An odd (1,3...) number is a stop button,
+    // otherwise a solver.
+    // If > 0, the the record is not counted
+    int m_start_solver;
 
     bool move_to(int row, int col);
     void set_grid();
@@ -45,10 +49,14 @@ private:
     void new_game();
     void end_game();
 
+    void switch_solver_buttons(bool enable);
+
 private slots:
     void on_pauseButton_clicked();
     void on_playAgainButton_clicked();
     void on_changeDifficultyButton_clicked();
+
+    void on_solveButton_clicked();
 
 protected:
     virtual void keyPressEvent(QKeyEvent *event) override;

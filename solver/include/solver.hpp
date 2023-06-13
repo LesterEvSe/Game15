@@ -10,6 +10,9 @@ class Solver {
     std::vector<std::vector<int>> m_field;
     std::pair<int, int> m_zero_pos;
 
+    int m_counter;
+    std::string m_solution;
+
     static char get_direction(int row, int col);
 
     bool solvable();
@@ -17,15 +20,11 @@ class Solver {
     void fill_field();
     std::string AStar();
 
-    Solver(const Solver&) = default;
-    Solver(Solver&&) = default;
-
-    Solver& operator=(const Solver&) = default;
-    Solver& operator=(Solver&&) = default;
-
 public:
-    int solve();
+    void solve();
     bool is_solved();
+
+    std::pair<int, int> next_move();
     void move(int row, int col);
     [[nodiscard]] const std::vector<std::vector<int>>& get_field() const;
 

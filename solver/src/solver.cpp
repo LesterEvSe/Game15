@@ -126,9 +126,10 @@ std::string Solver::AStar()
 
 
 Solver::Solver(int dimension) :
-        m_dimension(dimension),
-        m_size(dimension * dimension),
-        m_field(dimension, std::vector<int>(dimension))
+    m_dimension(dimension),
+    m_size(dimension * dimension),
+    m_field(dimension, std::vector<int>(dimension)),
+    m_counter(0)
 {
     do {
         fill_field();
@@ -141,13 +142,11 @@ Solver::Solver(int dimension) :
                 m_zero_pos = {row, col};
 }
 
-int Solver::solve()
+void Solver::solve()
 {
-    if (!solvable() || m_dimension < 2 || m_dimension > 5)
-        return -1;
-
-    std::string path = AStar();
-    return path.size();
+    m_counter = 0;
+    if (solvable() && m_dimension >= 2 && m_dimension <= 5);
+        m_solution = AStar();
 }
 
 bool Solver::is_solved()
@@ -158,6 +157,45 @@ bool Solver::is_solved()
             if (++value % m_size != m_field[row][col])
                 return false;
     return true;
+}
+
+std::pair<int, int> Solver::next_move()
+{
+    if (m_counter >= m_solution.size())
+        return {-1, -1};
+
+    std::pair<int, int> move;
+    switch (m_solution[m_counter])
+    {
+    case 'r':
+        std::swap(m_field[m_zero_pos.first][m_zero_pos.second],
+                  m_field[m_zero_pos.first][m_zero_pos.second + 1]);
+        move = {0, 1};
+        break;
+
+    case 'l':
+        std::swap(m_field[m_zero_pos.first][m_zero_pos.second],
+                  m_field[m_zero_pos.first][m_zero_pos.second - 1]);
+        move = {0, -1};
+        break;
+
+    case 'u':
+        std::swap(m_field[m_zero_pos.first][m_zero_pos.second],
+                  m_field[m_zero_pos.first - 1][m_zero_pos.second]);
+        move = {-1, 0};
+        break;
+
+    case 'd':
+        std::swap(m_field[m_zero_pos.first][m_zero_pos.second],
+                  m_field[m_zero_pos.first + 1][m_zero_pos.second]);
+        move = {1, 0};
+        break;
+    }
+
+    m_zero_pos.first += move.first;
+    m_zero_pos.second += move.second;
+    ++m_counter;
+    return move;
 }
 
 void Solver::move(int row, int col)

@@ -11,13 +11,18 @@
 #include <QPixmap> // for icon
 
 #include <vector>
+#include <QDebug> // NEED TO DELETE LATER!!!
 
 Game::Game(int dimension, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Game),
 
     m_dimension(dimension),
-    m_time_ms(0)
+    m_time_ms(0),
+
+    m_block_keyboard(false),
+    m_pause(false),
+    m_start_solver(0)
 {
     ui->setupUi(this);
     setWindowTitle("Game 15");
@@ -80,7 +85,10 @@ void Game::new_game()
         }
     m_block_keyboard = false;
     m_pause = false;
+    m_start_solver = 0;
+
     ui->solveButton->setEnabled(true);
+    ui->solveButton->setText("Solve");
     ui->pauseButton->setEnabled(true);
 
     m_time_ms = 0;
@@ -91,6 +99,7 @@ void Game::end_game()
 {
     m_timer.stop();
     m_block_keyboard = true;
+    switch_solver_buttons(true);
     ui->solveButton->setEnabled(false);
     ui->pauseButton->setEnabled(false);
 }
@@ -132,6 +141,14 @@ void Game::set_styles()
     ui->iconLabel->setPixmap(pixmap);
 }
 
+void Game::switch_solver_buttons(bool enable)
+{
+    ui->playAgainButton->setEnabled(enable);
+    ui->changeDifficultyButton->setEnabled(enable);
+    ui->bestTimesButton->setEnabled(enable);
+    ui->pauseButton->setEnabled(enable);
+}
+
 // This is where we take the movement of the cell
 // 1 0, -1 0, 0 1, 0 -1
 bool Game::move_to(int row, int col)
@@ -158,9 +175,6 @@ bool Game::move_to(int row, int col)
 
     QLabel *label_from = qobject_cast<QLabel*>(layout_item_from->widget());
     QLabel *label_to   = qobject_cast<QLabel*>(layout_item_to->widget());
-
-    //QPoint curr_pos    = label_from->pos();
-    //QPoint target_pos  = label_to->pos();
 
     // in ms
     static constexpr int duration {100};
@@ -198,6 +212,11 @@ bool Game::move_to(int row, int col)
 
         if (m_solver->is_solved())
             end_game();
+
+        else if (m_start_solver % 2) {
+            std::pair<int, int> pair = m_solver->next_move();
+            move_to(pair.first, pair.second);
+        }
     });
     return true;
 }
@@ -246,11 +265,9 @@ void Game::on_pauseButton_clicked()
     m_pause = false;
 }
 
-
 void Game::on_playAgainButton_clicked() {
     new_game();
 }
-
 
 void Game::on_changeDifficultyButton_clicked()
 {
@@ -261,5 +278,20 @@ void Game::on_changeDifficultyButton_clicked()
         Game *new_game = new Game(start_game);
         deleteLater();
     }
+}
+
+void Game::on_solveButton_clicked()
+{
+    if (m_start_solver++ % 2) {
+        ui->solveButton->setText("Solver");
+        switch_solver_buttons(true);
+        return;
+    }
+    switch_solver_buttons(false);
+    ui->solveButton->setText("Stop");
+    m_solver->solve();
+
+    std::pair<int, int> pair = m_solver->next_move();
+    move_to(pair.first, pair.second);
 }
 
