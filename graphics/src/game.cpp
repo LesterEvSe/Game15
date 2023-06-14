@@ -19,6 +19,7 @@ Game::Game(int dimension, QWidget *parent) :
 
     m_dimension(dimension),
     m_time_ms(0),
+    m_duration_animation_ms(100),
 
     m_block_keyboard(false),
     m_pause(false),
@@ -176,15 +177,14 @@ bool Game::move_to(int row, int col)
     QLabel *label_from = qobject_cast<QLabel*>(layout_item_from->widget());
     QLabel *label_to   = qobject_cast<QLabel*>(layout_item_to->widget());
 
-    // in ms
-    static constexpr int duration {100};
+    // setDuration in ms
     QPropertyAnimation *zero_animation = new QPropertyAnimation(label_from, "pos");
-    zero_animation->setDuration(duration);
+    zero_animation->setDuration(m_duration_animation_ms);
     zero_animation->setStartValue(label_from->pos());
     zero_animation->setEndValue(label_to->pos());
 
     QPropertyAnimation *elem_animation = new QPropertyAnimation(label_to, "pos");
-    elem_animation->setDuration(duration);
+    elem_animation->setDuration(m_duration_animation_ms);
     elem_animation->setStartValue(label_to->pos());
     elem_animation->setEndValue(label_from->pos());
 
@@ -225,12 +225,10 @@ bool Game::move_to(int row, int col)
 
 void Game::keyPressEvent(QKeyEvent *event)
 {
+    if (m_block_keyboard) return;
+
     int key = event->key();
     QString unicode_char = event->text();
-    if (key == Qt::Key_P || unicode_char == QString("з"))
-        on_pauseButton_clicked();
-
-    if (m_block_keyboard) return;
 
     // Although programmatically we move the 0 cell,
     // the user moves specific blocks of numbers.
@@ -284,12 +282,20 @@ void Game::on_solveButton_clicked()
 {
     if (m_start_solver++ % 2) {
         ui->solveButton->setText("Solver");
+        m_duration_animation_ms = 100; // set default value
         switch_solver_buttons(true);
         return;
     }
     switch_solver_buttons(false);
     ui->solveButton->setText("Stop");
-    m_solver->solve();
+
+    // fps * steps = time
+    // time = 15'000 ms
+    // fps = time / steps
+    // select a value between 60 and 100 ms depending on the number of moves,
+    // with a limit <= 15 seconds.
+    // Can be ignored if the speed should be < 60 ms
+    m_duration_animation_ms = std::min(100, std::max(60, 15'000 / m_solver->solve()));
 
     std::pair<int, int> pair = m_solver->next_move();
     move_to(pair.first, pair.second);

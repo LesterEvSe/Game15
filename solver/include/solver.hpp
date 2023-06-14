@@ -21,7 +21,7 @@ class Solver {
     std::string AStar();
 
 public:
-    void solve();
+    int solve();
     bool is_solved();
 
     std::pair<int, int> next_move();

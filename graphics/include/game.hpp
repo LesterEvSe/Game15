@@ -30,6 +30,11 @@ private:
     std::unique_ptr<Solver> m_solver;
 
     unsigned int m_time_ms;
+
+    // To make the solver faster, we will speed up,
+    // depending on the number of steps
+    int m_duration_animation_ms;
+
     QTimer m_timer;
     QPair<int, int> m_zero_pos;
 

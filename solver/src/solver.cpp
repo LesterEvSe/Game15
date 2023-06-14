@@ -110,11 +110,11 @@ std::string Solver::AStar()
             int new_zrow = board.get_zero_ind() / m_dimension + move[i-1];
             int new_zcol = board.get_zero_ind() % m_dimension + move[i];
 
-            // Якщо нові координати виходять за межі поля, то пропустити цю ітерацію
+            // If the new coordinates are outside the field boundaries, skip the iteration
             if (new_zrow < 0 || new_zrow >= m_dimension ||
                 new_zcol < 0 || new_zcol >= m_dimension) continue;
 
-            // змінюємо позицію нашого поля, перетворюючи двомірні координати в одномірні
+            // Change the position of the field and conver the 2D coordinates into 1D coord
             std::swap(temp[new_zrow*m_dimension + new_zcol], temp[board.get_zero_ind()]);
             if (visited.find(temp) == visited.end()) {
                 visited.emplace(temp);
@@ -142,11 +142,14 @@ Solver::Solver(int dimension) :
                 m_zero_pos = {row, col};
 }
 
-void Solver::solve()
+int Solver::solve()
 {
     m_counter = 0;
-    if (solvable() && m_dimension >= 2 && m_dimension <= 5);
+    if (solvable() && m_dimension >= 2 && m_dimension <= 5) {
         m_solution = AStar();
+        return m_solution.size();
+    }
+    return 0;
 }
 
 bool Solver::is_solved()
