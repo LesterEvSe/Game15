@@ -137,7 +137,7 @@ void Game::set_grid()
 
 void Game::set_styles()
 {
-    QPixmap pixmap(":/clock.png");
+    QPixmap pixmap(":/res/clock.png");
     pixmap = pixmap.scaled(pixmap.size());
     ui->iconLabel->setPixmap(pixmap);
 }
