@@ -1,15 +1,18 @@
 add_library(graphics
     src/game.cpp
     src/menu.cpp
+    src/statistics.cpp
     
     # This is necessary for moc files,
     # otherwise there will be an error!
     include/game.hpp
     include/menu.hpp
+    include/statistics.hpp
     
     # To display these files in Qt Creator
     forms/game.ui
     forms/menu.ui
+    forms/statistics.ui
 )
 
 # To specify where the .ui files are located
