@@ -14,6 +14,7 @@ AcceptResult::AcceptResult(unsigned int time_sec, QWidget *parent) :
     ui->timeLabel->setText(
         QString::number(m_time_sec/60) + " minutes\n" +
         QString::number(m_time_sec%60) + " seconds");
+
     set_styles();
 }
 
@@ -30,11 +31,17 @@ void AcceptResult::set_styles()
 void AcceptResult::on_okButton_clicked()
 {
     QString username = ui->playerLineEdit->text();
-    if (username.length() < 32) {
+    if (username.length() < 4) {
+        QMessageBox::warning(this, "Warning", "Username must contain at least 4 symbols");
+        ui->playerLineEdit->clear();
+    }
+    else if (username.length() > 32) {
+        QMessageBox::warning(this, "Warning", "Username is too long");
+        ui->playerLineEdit->clear();
+    }
+    else {
         // here work with DataBase
         accept();
     }
-    else
-        QMessageBox::warning(this, "Warning", "Username is too long");
 }
 

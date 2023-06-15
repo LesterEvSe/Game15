@@ -22,7 +22,7 @@ add_library(graphics
 set_target_properties(graphics PROPERTIES AUTOUIC_SEARCH_PATHS forms)
 target_include_directories(graphics
     PUBLIC include
-    ../solver/include
+	../logic/include
 )
 
 target_link_libraries(graphics PRIVATE

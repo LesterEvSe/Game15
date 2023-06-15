@@ -26,7 +26,7 @@ endif()
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 
 add_subdirectory(graphics)
-add_subdirectory(solver)
+add_subdirectory(logic)
 add_executable(Game15
     ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/resource.qrc
@@ -37,5 +37,5 @@ target_link_libraries(Game15 PRIVATE
     Qt5::Gui
     Qt5::Widgets
     graphics
-    solver
+    logic
 )
