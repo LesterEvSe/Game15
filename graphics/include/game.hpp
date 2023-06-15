@@ -2,6 +2,8 @@
 #define GAME_HPP
 
 #include "solver.hpp"
+#include "acceptresult.hpp"
+#include "statistics.hpp"
 
 #include <QApplication>
 #include <QWidget>
@@ -10,9 +12,7 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QTimer>
-
 #include <QKeyEvent>
-
 #include <memory>
 
 namespace Ui { class Game; }

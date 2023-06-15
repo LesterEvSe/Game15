@@ -31,13 +31,12 @@ Game::Game(int dimension, QWidget *parent) :
     set_grid();
     set_styles();
     QObject::connect(&m_timer, &QTimer::timeout, [this](){
-        static constexpr unsigned int max_time = 3'600'000*100-1;
+        static constexpr unsigned int max_time = 60'000*100-1;
         if (m_time_ms >= max_time) return;
         ++m_time_ms;
 
-        ui->timeLabel->setText(QString("%1:%2:%3")
-                                   .arg(m_time_ms/3'600'000,   2, 10, QChar('0'))
-                                   .arg((m_time_ms/60'000)%60, 2, 10, QChar('0'))
+        ui->timeLabel->setText(QString("%1:%2")
+                                   .arg((m_time_ms/60'000),    2, 10, QChar('0'))
                                    .arg((m_time_ms/1'000)%60,  2, 10, QChar('0')));
     });
 
@@ -103,6 +102,14 @@ void Game::end_game()
     switch_solver_buttons(true);
     ui->solveButton->setEnabled(false);
     ui->pauseButton->setEnabled(false);
+
+    if (!m_start_solver) {
+        AcceptResult *accept = new AcceptResult(m_time_ms/1'000, this);
+        accept->exec();
+        setEnabled(false);
+        accept->deleteLater();
+    }
+    setEnabled(true);
 }
 
 

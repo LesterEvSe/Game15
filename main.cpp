@@ -6,6 +6,8 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
+
     std::unique_ptr<Menu> menu = std::make_unique<Menu>();
     int start_game = menu->exec();
     if (!start_game) return 0;

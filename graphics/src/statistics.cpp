@@ -6,6 +6,7 @@ Statistics::Statistics(QWidget *parent) :
     ui(new Ui::Statistics)
 {
     ui->setupUi(this);
+    setWindowTitle("Best Times");
 }
 
 Statistics::~Statistics() {
