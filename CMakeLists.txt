@@ -23,7 +23,7 @@ if (UNIX AND NOT APPLE)
     endif()
 endif()
 
-find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
+find_package(Qt5 COMPONENTS Core Gui Widgets Sql REQUIRED)
 
 add_subdirectory(graphics)
 add_subdirectory(logic)
@@ -35,7 +35,7 @@ add_executable(Game15
 target_link_libraries(Game15 PRIVATE
     Qt5::Core
     Qt5::Gui
-    Qt5::Widgets
+	Qt5::Widgets
     graphics
     logic
 )
