@@ -302,7 +302,7 @@ void Game::on_solveButton_clicked()
     // select a value between 60 and 100 ms depending on the number of moves,
     // with a limit <= 15 seconds.
     // Can be ignored if the speed should be < 60 ms
-    m_duration_animation_ms = std::min(100, std::max(60, 15'000 / m_solver->solve()));
+    m_duration_animation_ms = std::min(100, std::max(70, 15'000 / m_solver->solve()));
 
     std::pair<int, int> pair = m_solver->next_move();
     move_to(pair.first, pair.second);

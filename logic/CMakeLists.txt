@@ -15,4 +15,5 @@ add_library(logic
 target_include_directories(logic PUBLIC include)
 target_link_libraries(logic PRIVATE
     Qt5::Sql
+	Qt5::Core
 )

@@ -1,2 +1,10 @@
-*build*
-*user
+build
+*-build-*
+
+# IDEA and Qt files
+*.idea
+*.user
+
+# ignore DB files
+*.sqlite
+*.db
