@@ -1,13 +1,17 @@
 #include "acceptresult.hpp"
 #include "ui_acceptresult.h"
+#include "game.hpp" // for 'showErrorAndExit' function
 
 #include <QMessageBox>
 #include <QIcon>
 
-AcceptResult::AcceptResult(unsigned int time_sec, QWidget *parent) :
+AcceptResult::AcceptResult(int dimension, unsigned int time_sec, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AcceptResult),
-    m_time_sec(time_sec)
+
+    m_dimension(dimension),
+    m_time_sec(time_sec),
+    m_database(Database::get_instance())
 {
     ui->setupUi(this);
     setWindowTitle("Congratulations!");
@@ -40,8 +44,13 @@ void AcceptResult::on_okButton_clicked()
         ui->playerLineEdit->clear();
     }
     else {
-        // here work with DataBase
-        accept();
+        try {
+            m_database->add_time(m_dimension, m_time_sec, username);
+            accept();
+        }
+        catch(const QSqlError &error) {
+            Game::showErrorAndExit("Caught SQL error: " + error.text());
+        }
     }
 }
 

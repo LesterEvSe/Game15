@@ -67,6 +67,7 @@ protected:
     virtual void keyPressEvent(QKeyEvent *event) override;
 
 public:
+    static void showErrorAndExit(const QString &error);
     explicit Game(int dimension, QWidget *parent = nullptr);
     ~Game();
 };

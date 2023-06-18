@@ -28,5 +28,6 @@ target_include_directories(graphics
 target_link_libraries(graphics PRIVATE
     Qt5::Core
     Qt5::Gui
-    Qt5::Widgets
+	Qt5::Widgets
+	Qt5::Sql
 )

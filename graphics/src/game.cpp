@@ -9,6 +9,7 @@
 
 #include <QPropertyAnimation>
 #include <QPixmap> // for icon
+#include <QMessageBox>
 
 #include <vector>
 #include <QDebug> // NEED TO DELETE LATER!!!
@@ -61,6 +62,11 @@ Game::~Game() {
     delete ui;
 }
 
+void Game::showErrorAndExit(const QString &error) {
+    QMessageBox::critical(nullptr, "Error", error);
+    exit(1);
+}
+
 
 void Game::new_game()
 {
@@ -104,7 +110,7 @@ void Game::end_game()
     ui->pauseButton->setEnabled(false);
 
     if (!m_start_solver) {
-        AcceptResult *accept = new AcceptResult(m_time_ms/1'000, this);
+        AcceptResult *accept = new AcceptResult(m_dimension, m_time_ms/1'000, this);
         accept->exec();
         setEnabled(false);
         accept->deleteLater();
