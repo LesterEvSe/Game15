@@ -1,4 +1,4 @@
-# If you change the name of the library and the folder,
+# If you change the name of the the folder,
 # don't forget to look in the graphics CMakeLists.txt!
 add_library(logic
     src/solver.cpp
