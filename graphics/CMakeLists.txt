@@ -22,12 +22,12 @@ add_library(graphics
 set_target_properties(graphics PROPERTIES AUTOUIC_SEARCH_PATHS forms)
 target_include_directories(graphics
     PUBLIC include
-	../logic/include
+    ../logic/include
 )
 
 target_link_libraries(graphics PRIVATE
     Qt5::Core
     Qt5::Gui
-	Qt5::Widgets
-	Qt5::Sql
+    Qt5::Widgets
+    Qt5::Sql
 )
