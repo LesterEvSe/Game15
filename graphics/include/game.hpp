@@ -22,6 +22,8 @@ class Game : public QWidget
 
 private:
     Ui::Game *ui;
+    Statistics *m_stats;
+
     QWidget *m_game_widget;
     QWidget *m_pause_widget;
     QGridLayout *m_grid_layout;
@@ -58,6 +60,8 @@ private:
 
 private slots:
     void on_pauseButton_clicked();
+    void on_bestTimesButton_clicked();
+
     void on_playAgainButton_clicked();
     void on_changeDifficultyButton_clicked();
 

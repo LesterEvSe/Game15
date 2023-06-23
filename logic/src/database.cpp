@@ -1,7 +1,5 @@
 #include "database.hpp"
 
-#include <QDebug>
-
 Database::Database() :
     m_stats(QSqlDatabase::addDatabase("QSQLITE"))
 {
@@ -61,20 +59,24 @@ void Database::add_time(int dimension, unsigned int time_sec, const QString &nic
 }
 
 
-std::vector<std::vector<QString>> Database::get_time_players(int dimension)
+std::vector<std::pair<QString, QString>> Database::get_time_players(int dimension)
 {
-    QSqlQuery query("SELECT time, username "
-                    "FROM stats "
-                    "WHERE dimension = :dim");
-    query.bindValue(":dim", dimension);
+    /// If we use bindValue, we have to do as it says here,
+    /// query("...") is not allowed, there will be an error!!!
+    QSqlQuery query;
+    query.prepare("SELECT time, username "
+                  "FROM stats "
+                  "WHERE dimension = :dimension "
+                  "ORDER BY time ASC");
+    query.bindValue(":dimension", dimension);
 
     if (!query.exec())
         throw QSqlError(query.lastError().text());
 
-    std::vector<std::vector<QString>> stats;
+    std::vector<std::pair<QString, QString>> stats;
     while (query.next())
-        stats.emplace_back(std::vector<QString>
-                           {query.value(0).toString(),
-                            query.value(1).toString()});
+        stats.emplace_back(query.value(0).toString(),
+                           query.value(1).toString());
     return stats;
 }
+

@@ -12,11 +12,12 @@
 #include <QMessageBox>
 
 #include <vector>
-#include <QDebug> // NEED TO DELETE LATER!!!
+#include <QDebug> /// NEED TO DELETE LATER!!!
 
 Game::Game(int dimension, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Game),
+    m_stats(new Statistics(dimension, this)),
 
     m_dimension(dimension),
     m_time_ms(0),
@@ -112,10 +113,8 @@ void Game::end_game()
     if (!m_start_solver) {
         AcceptResult *accept = new AcceptResult(m_dimension, m_time_ms/1'000, this);
         accept->exec();
-        setEnabled(false);
         accept->deleteLater();
     }
-    setEnabled(true);
 }
 
 
@@ -276,6 +275,17 @@ void Game::on_pauseButton_clicked()
     m_pause = false;
 }
 
+void Game::on_bestTimesButton_clicked()
+{
+    if (!m_pause && ui->pauseButton->isEnabled())
+        on_pauseButton_clicked();
+
+    m_stats->exec();
+    if (ui->pauseButton->isEnabled())
+        on_pauseButton_clicked();
+}
+
+
 void Game::on_playAgainButton_clicked() {
     new_game();
 }
@@ -307,10 +317,9 @@ void Game::on_solveButton_clicked()
     // fps = time / steps
     // select a value between 60 and 100 ms depending on the number of moves,
     // with a limit <= 15 seconds.
-    // Can be ignored if the speed should be < 60 ms
+    // Can be ignored if the speed should be < 70 ms
     m_duration_animation_ms = std::min(100, std::max(70, 15'000 / m_solver->solve()));
 
     std::pair<int, int> pair = m_solver->next_move();
     move_to(pair.first, pair.second);
 }
-

@@ -18,7 +18,7 @@ private:
 public:
     static Database* get_instance();
     void add_time(int dimension, unsigned int time_sec, const QString &nickname);
-    std::vector<std::vector<QString>> get_time_players(int dimension);
+    std::vector<std::pair<QString, QString>> get_time_players(int dimension);
 };
 
 #endif // DATABASE_HPP
