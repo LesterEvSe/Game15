@@ -12,7 +12,9 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QTimer>
+
 #include <QKeyEvent>
+#include <QMouseEvent>
 #include <memory>
 
 namespace Ui { class Game; }
@@ -49,9 +51,9 @@ private:
     // If > 0, the the record is not counted
     int m_start_solver;
 
+    void set_styles();
     bool move_to(int row, int col);
     void set_grid();
-    void set_styles();
 
     void new_game();
     void end_game();
@@ -69,6 +71,7 @@ private slots:
 
 protected:
     virtual void keyPressEvent(QKeyEvent *event) override;
+    virtual void mousePressEvent(QMouseEvent *event) override;
 
 public:
     static void showErrorAndExit(const QString &error);

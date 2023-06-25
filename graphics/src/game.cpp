@@ -68,6 +68,14 @@ void Game::showErrorAndExit(const QString &error) {
     exit(1);
 }
 
+void Game::set_styles()
+{
+    QPixmap pixmap(":/res/clock.png");
+    pixmap = pixmap.scaled(pixmap.size());
+    ui->iconLabel->setPixmap(pixmap);
+}
+
+
 
 void Game::new_game()
 {
@@ -81,10 +89,12 @@ void Game::new_game()
             QLabel *label = qobject_cast<QLabel*>(m_grid_layout->itemAtPosition(row, col)->widget());
 
             if (value) {
+
                 label->setText(QString::number(value));
                 label->setFrameStyle(QFrame::Box);
             }
             else {
+
                 label->setText("");
                 label->setFrameStyle(QFrame::NoFrame);
                 m_zero_pos = {row, col};
@@ -145,13 +155,6 @@ void Game::set_grid()
 
     m_game_widget->setLayout(m_grid_layout);
     ui->stackedWidget->setCurrentWidget(m_game_widget);
-}
-
-void Game::set_styles()
-{
-    QPixmap pixmap(":/res/clock.png");
-    pixmap = pixmap.scaled(pixmap.size());
-    ui->iconLabel->setPixmap(pixmap);
 }
 
 void Game::switch_solver_buttons(bool enable)
@@ -254,6 +257,30 @@ void Game::keyPressEvent(QKeyEvent *event)
         move_to(1, 0);
     else if (key == Qt::Key_S || key == Qt::Key_Down  || unicode_char == QString("ы") || unicode_char == QString("і"))
         move_to(-1, 0);
+}
+
+void Game::mousePressEvent(QMouseEvent *event)
+{
+    if (m_block_keyboard || event->buttons() != Qt::LeftButton) return;
+
+    QRect first = m_grid_layout->cellRect(0, 0);
+    QRect last  = m_grid_layout->cellRect(m_dimension-1, m_dimension-1);
+
+    QPoint pos = event->pos();
+    QPoint edge  = QPoint(last.x() + last.width() + m_grid_layout->spacing(),
+                         last.y() + last.height() + m_grid_layout->spacing());
+
+    // If the click is outside the QGridLayout
+    if (pos.x() < first.x() || pos.y() < first.y() ||
+        pos.x() > edge.x()  || pos.y() > edge.y()) return;
+
+    // Get the coordinates of the clicked cell
+    int row = pos.y() / ((edge.y() - first.y()) / m_dimension);
+    int col = pos.x() / ((edge.x() - first.x()) / m_dimension);
+
+    // If the selected cell is nearby (up, down, left, right)
+    if (std::abs(row - m_zero_pos.first) + std::abs(col - m_zero_pos.second) == 1)
+        move_to(row - m_zero_pos.first , col - m_zero_pos.second);
 }
 
 void Game::on_pauseButton_clicked()
