@@ -9,14 +9,28 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (WIN32)
-	execute_process(COMMAND dir /B /AD /S "C:\\Path\\to\\Qt\\*\\*\\lib\\cmake" OUTPUT_VARIABLE QT_DIR)
-	string(REGEX REPLACE "\n$" "" QT_DIR "${QT_DIR}")
+    set(QT_DIR "C:/Qt/5*/msvc2019_64/lib/cmake")
+    #[[
+    set(QT_DLL_FILES
+        Qt5Widgetsd.dll
+        Qt5Guid.dll
+        Qt5Sqld.dll
+        Qt5Cored.dll
+    )
+
+    set(BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
+    set(QT_DLL_DIR "C:/Qt/5*/msvc2019_64/bin")
+
+    foreach(DLL_FILE IN LISTS QT_DLL_FILES)
+        file(COPY ${QT_DLL_DIR}/${DLL_FILE} DESTINATION ${BUILD_DIR})
+    endforeach()
+    #]]
 endif()
 
 if (UNIX AND APPLE)
-	execute_process(COMMAND find /usr/local -type d -name "Qt" 2>/dev/null
-		OUTPUT_VARIABLE QT_DIR
-		OUTPUT_STRIP_TRAILING_WHITESPACE)
+    execute_process(COMMAND find /usr/local -type d -name "Qt" 2>/dev/null
+        OUTPUT_VARIABLE QT_DIR
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
 endif()
 
 # Find in Linux file system
@@ -29,10 +43,10 @@ endif()
 
 
 if (QT_DIR)
-	list(APPEND CMAKE_PREFIX_PATH "${QT_DIR}")
-	message(STATUS "Set CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
+    list(APPEND CMAKE_PREFIX_PATH "${QT_DIR}")
+    message(STATUS "Set CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
 else()
-	message(FATAL_ERROR "Could not find Qt directory")
+    message(FATAL_ERROR "Could not find Qt directory")
 endif()
 
 

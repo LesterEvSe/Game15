@@ -48,7 +48,7 @@ void Statistics::on_comboBox_currentIndexChanged(int index)
     ui->rankTextBrowser->clear();
     ui->timeTextBrowser->clear();
     ui->playerTextBrowser->clear();
-    setFixedSize(820, 320); // The size is handpicked
+    setFixedSize(1200, 400); // The size is handpicked
 
     for (int i = 0; i < data.size(); ++i) {
         unsigned int time = data[i].first.toInt();
