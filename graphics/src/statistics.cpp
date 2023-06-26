@@ -29,6 +29,7 @@ Statistics::~Statistics() {
 }
 
 int Statistics::exec() {
+    ui->comboBox->setCurrentIndex(m_dimension-2);
     on_comboBox_currentIndexChanged(m_dimension-2);
     return QDialog::exec();
 }

@@ -3,7 +3,7 @@
 Database::Database() :
     m_stats(QSqlDatabase::addDatabase("QSQLITE"))
 {
-    QString DBName = "../statistics.sqlite";
+    QString DBName = "statistics.sqlite";
     m_stats.setDatabaseName(DBName);
 
     if (!m_stats.open())
