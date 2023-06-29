@@ -21,9 +21,9 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QPushButton" name="instructionButton">
+    <widget class="QPushButton" name="informationButton">
      <property name="text">
-      <string>Instruction</string>
+      <string>Information</string>
      </property>
     </widget>
    </item>

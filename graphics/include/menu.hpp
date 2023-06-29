@@ -17,7 +17,7 @@ private slots:
     void on_button4x4_clicked();
     void on_button5x5_clicked();
 
-    void on_instructionButton_clicked();
+    void on_informationButton_clicked();
 
 public:
     explicit Menu(QWidget *parent = nullptr);
