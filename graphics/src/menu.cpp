@@ -23,7 +23,7 @@ void Menu::on_button5x5_clicked() { done(5); }
 void Menu::on_informationButton_clicked()
 {
     QMessageBox::information(this, "Information",
-                "The main goal is to arrange all the blocks"
+                "The main goal is to arrange all the blocks "
                 "in ascending order, for example:\n\n"
 
                 "1 2 3\n"
