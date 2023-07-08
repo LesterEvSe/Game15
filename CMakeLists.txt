@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (WIN32)
-    set(QT_DIR "C:/Qt/5*/msvc2019_64/lib/cmake/Qt5")
+    set(QT_DIR "C:/*/5*/msvc*/lib/cmake/Qt5")
 endif()
 
 if (UNIX AND APPLE)
