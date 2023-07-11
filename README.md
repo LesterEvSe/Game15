@@ -44,8 +44,8 @@ in the project folder with the command ***mkdir build***
 
 # Windows build with Qt Creator
 1. Install Qt5 **to any folder on the C drive** https://www.qt.io/download-open-source  
-2. In addition to the default packages, choose these packages for Qt5
-MSVC for your system (64 or 32 bit)  
+2. In addition to the default packages, choose the
+MSVC compiler for your system (64 or 32 bit)
 
 ## Run
 Now run projects with Qt Creator and build them with the MSVC compiler compiler
