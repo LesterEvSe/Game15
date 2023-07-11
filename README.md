@@ -34,12 +34,12 @@ otherwise the project will not build.
   ***sudo yum install gcc-c++ cmake***  
 * Arch Linux  
   ***sudo pacman -S gcc cmake***
-3. To build a project, you need to make a "build" directory 
+2. To build a project, you need to make a "build" directory
 in the project folder with the command ***mkdir build***
-4. Then move into it with the command ***cd build*** 
-5. Next, you need to run ***cmake ..*** command inside "build" directory. 
-6. Finally, use the ***make*** command to compile, link the project, and create an executable. 
-7. Now you can run the application with the ***./Game15*** command.
+3. Then move into it with the command ***cd build***
+4. Next, you need to run ***cmake ..*** command inside "build" directory.
+5. Finally, use the ***make*** command to compile, link the project, and create an executable.
+6. Now you can run the application with the ***./Game15*** command.
 
 
 # Windows build with Qt Creator
