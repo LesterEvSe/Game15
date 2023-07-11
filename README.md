@@ -1,5 +1,5 @@
 # Game15
-Qt5 cross-platform game for Android, Windows and Linux.
+Qt5 cross-platform game for Windows and Linux.
 Made for fun. Algorithms for solving the position is present.
 For 2x2 and 3x3 game fields it solves for the minimum number of moves.
 For 4x4 and 5x5 for the optimal.  
