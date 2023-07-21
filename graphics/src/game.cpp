@@ -12,7 +12,6 @@
 #include <QMessageBox>
 
 #include <vector>
-#include <QDebug> /// NEED TO DELETE LATER!!!
 
 Game::Game(int dimension, QWidget *parent) :
     QWidget(parent),

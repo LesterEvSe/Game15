@@ -3,7 +3,6 @@
 #include "game.hpp" // for 'showErrorAndExit' function
 
 #include <vector>
-#include <QDebug> /// NEED TO DELETE LATER!!!
 
 Statistics::Statistics(int dimension, QWidget *parent) :
     QDialog(parent),
