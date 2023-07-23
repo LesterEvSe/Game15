@@ -2,6 +2,7 @@
 #include "item.hpp"
 
 #include <unordered_set>    // To memorize paths in the A* algorithm
+#include <algorithm>
 #include <queue>
 #include <random>
 
