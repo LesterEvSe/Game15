@@ -9,22 +9,18 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (WIN32)
-    set(QT_DIR "C:/*/5*/msvc*/lib/cmake/Qt5")
-endif()
+    set(QT_DIR "C:/*/${QT_VERSION_MAJOR}*/msvc*/lib/cmake/Qt${QT_VERSION_MAJOR}")
 
-if (UNIX AND APPLE)
+elseif (UNIX AND APPLE)
     execute_process(COMMAND find /usr/local -type d -name "Qt" 2>/dev/null
         OUTPUT_VARIABLE QT_DIR
         OUTPUT_STRIP_TRAILING_WHITESPACE)
-endif()
 
-# Find in Linux file system
-if (UNIX AND NOT APPLE)
-    execute_process(COMMAND find /home -type d -path "*Qt/5*/*/lib/cmake"
+elseif (UNIX AND NOT APPLE) # Find in Linux file system
+    execute_process(COMMAND find /home -type d -path "*Qt/${QT_VERSION_MAJOR}*/*/lib/cmake"
         OUTPUT_VARIABLE QT_DIR
         OUTPUT_STRIP_TRAILING_WHITESPACE)
 endif()
-
 
 
 if (QT_DIR)
@@ -34,8 +30,8 @@ else()
     message(FATAL_ERROR "Could not find Qt directory")
 endif()
 
-
-find_package(Qt5 COMPONENTS Core Gui Widgets Sql REQUIRED)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets Sql)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets Sql)
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/graphics/src
@@ -79,21 +75,46 @@ set(FORMS
     ${CMAKE_CURRENT_SOURCE_DIR}/graphics/forms/acceptresult.ui
 )
 
-add_executable(Game15
+set(ALL_SOURCES
     ${SOURCES}
     ${HEADERS}
     ${FORMS}
     ${CMAKE_CURRENT_SOURCE_DIR}/resource.qrc
 )
 
+# Need for Android build
+if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+    qt_add_executable(Game15
+        MANUAL_FINALIZATION
+        ${ALL_SOURCES}
+    )
+else()
+    if (ANDROID)
+        add_library(Game15 SHARED ${ALL_SOURCES})
+    else()
+        add_executable(Game15 ${ALL_SOURCES})
+    endif()
+endif()
+
 target_link_libraries(Game15 PRIVATE
-    Qt5::Core
-    Qt5::Gui
-    Qt5::Widgets
-    Qt5::Sql
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Gui
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Sql
 )
 
 # To specify where the .ui files are located
 set_target_properties(Game15 PROPERTIES AUTOUIC_SEARCH_PATHS
     ${CMAKE_CURRENT_SOURCE_DIR}/graphics/forms
 )
+
+# Need for Android build
+install(TARGETS Game15
+    BUNDLE DESTINATION .
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+if(QT_VERSION_MAJOR EQUAL 6)
+    qt_finalize_executable(Game15)
+endif()
